@@ -6,8 +6,6 @@ export const InfiniteScroll = ({
   loadMoreFunction,
   isLoadingMore,
   loadingMoreMessage,
-  hasLoadedEverything,
-  loadedEverythingMessage,
   children,
 }: InfiniteScrollProps) => {
   const observableRef = useRef<HTMLDivElement>(null);
@@ -22,8 +20,6 @@ export const InfiniteScroll = ({
       {children}
 
       {isLoadingMore && loadingMoreMessage}
-
-      {hasLoadedEverything && loadedEverythingMessage}
 
       <div ref={observableRef} />
     </>

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 import { Loading } from "components/common/Loading";
@@ -27,10 +27,12 @@ export default function Home() {
     setError(null);
 
     try {
-      await axios.get("https://picsum.photos/v2/list").then(({ data }) => {
-        setPics((prevData) => [...prevData, ...data]);
-        setPage((prevPage) => prevPage + 1);
-      });
+      await axios
+        .get(`https://picsum.photos/v2/list?page=${page}&limit=1`)
+        .then((pics) => {
+          setPics((prevData) => [...prevData, ...pics.data]);
+          setPage((prevPage) => prevPage + 1);
+        });
     } catch (error) {
       setError(error);
     } finally {
@@ -38,31 +40,27 @@ export default function Home() {
     }
   };
 
-  console.log(pics);
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm flex flex-col">
         <InfiniteScroll
           loadMoreFunction={fetchPics}
           isLoadingMore={isLoading}
-          loadedEverythingMessage={<Loading />}
+          loadingMoreMessage={<Loading />}
         >
-          {pics.map(
-            ({ id, author, width, height, url, download_url }: Pic, idx) => {
-              return (
-                <Image
-                  className="my-6 shadow-xl"
-                  key={idx}
-                  src={download_url}
-                  width={width}
-                  height={height}
-                  alt="profile_picture"
-                  priority
-                />
-              );
-            }
-          )}
+          {pics.map(({ width, height, download_url }: Pic, idx) => {
+            return (
+              <Image
+                className="my-6 shadow-xl"
+                key={idx}
+                src={download_url}
+                width={width}
+                height={height}
+                alt="profile_picture"
+                priority
+              />
+            );
+          })}
         </InfiniteScroll>
       </div>
     </main>
